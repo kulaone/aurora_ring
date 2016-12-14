@@ -1,6 +1,6 @@
 # Aurora Ring
 
-> An led ring alerts system of when the aurora might be visible from the UK
+> A LED ring alerts system of when the aurora might be visible from the UK
 
 Base on API by [AuroraWatch UK][1]
 
