@@ -6,16 +6,20 @@
 #include <Adafruit_NeoPixel.h>
 #include <SimpleTimer.h>
 
-#define NUM_PIXELS 24
+// Wi-Fi info
+const char* ssid = "XXXXXX";
+const char* password = "XXXXXX";
 
+const int NUM_PIXELS 24;
+
+// Host info
+const char* host = "aurorawatch-api.lancs.ac.uk";
+// Set up the
 Adafruit_NeoPixel pixels(NUM_PIXELS, D2, NEO_GRB | NEO_KHZ800);
 WiFiClient client;
 // the timer object
 SimpleTimer timer;
-// Wi-Fi and host info
-const char* ssid = "XXXXXX";
-const char* password = "XXXXXX";
-const char* host = "aurorawatch-api.lancs.ac.uk";
+
 // Colos and brightness
 const uint32_t noColor = pixels.Color(0, 0, 0); // No color
 const uint32_t cBlue = pixels.Color(0, 0, 200); // Blue
