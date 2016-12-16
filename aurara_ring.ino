@@ -1,5 +1,9 @@
 /*
  *  Aurora Ring
+ *  By Daniel Gwerzman
+ *
+ *  https://github.com/kulaone/aurora_ring
+ *  If you like this project, please add a star!
  */
 
 #include <ESP8266WiFi.h>
