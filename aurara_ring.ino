@@ -14,7 +14,7 @@
 const char* ssid = "XXXXXX";
 const char* password = "XXXXXX";
 
-const int NUM_PIXELS 24;
+const int NUM_PIXELS = 24;
 
 // Host info
 const char* host = "aurorawatch-api.lancs.ac.uk";
