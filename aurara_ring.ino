@@ -10,12 +10,21 @@
 #include <Adafruit_NeoPixel.h>
 #include <SimpleTimer.h>
 
-// Wi-Fi info
-const char* ssid = "XXXXXX";
-const char* password = "XXXXXX";
-
+/* Wi-Fi info
+ If More then one network, use the follow:
+ const char* networks[][2] = {
+         { "ssid1", "password1"},
+         { "ssid2", "password2"},
+         { "ssid3", "password3" }
+     };
+ */
+const char* networks[][2] = {
+        { "ssid1", "password1"}
+    };
+// Numbers of LEDs in the ring
 const int NUM_PIXELS = 24;
-
+// The aurorawatch site ask that the interval between requests will be 3 minutes or longer.
+const int webTimer = 1000*60*3;
 // Host info
 const char* host = "aurorawatch-api.lancs.ac.uk";
 // Set up the
@@ -27,6 +36,7 @@ SimpleTimer timer;
 // Colos and brightness
 const uint32_t noColor = pixels.Color(0, 0, 0); // No color
 const uint32_t cBlue = pixels.Color(0, 0, 200); // Blue
+const uint32_t cDBlue = pixels.Color(0, 0, 50); // Dark Blue
 const uint32_t cGreen = pixels.Color(0, 100, 0); // Green
 const uint32_t cYellow = pixels.Color(255, 255, 0); // Yellow
 const uint32_t cAmber = pixels.Color(255, 126, 0); // Amber
@@ -43,18 +53,21 @@ const int alertRed = 200;
 const int ringRatio = alertRed / NUM_PIXELS;
 const int delayedLedAnumation = 50;
 
-int connectionWaitID; // timer Id of the connection wait function
-int showLedId = 0; // timer Id of the showLed function
+int networksCounter = 0;
+int connectionWaitID = -1; // timer Id of the connection wait function
+int showLedId = -1; // timer Id of the showLed function
 int nextLed2Show = 0;
 int ringLevel = 0;
 uint32_t ringColor;
-
+int animation_led = 0;
 // If you need to test the ring, change this to true.
 const boolean testRingMode = false;
 
 void setup() {
   Serial.begin(115200);
   pinMode(LED_BUILTIN, OUTPUT);     // Initialize the LED_BUILTIN pin as an output
+  pixels.setBrightness(brightnessDefault);
+  pixels.begin();
   if (testRingMode) {
     timer.setInterval(3000, testRing);
   } else {
@@ -63,21 +76,26 @@ void setup() {
 }
 
 void connecting2wifi() {
-  pixels.setBrightness(brightnessDefault);
-  pixels.begin();
   // We start by connecting to a WiFi network
   Serial.println();
   Serial.print("Connecting to ");
+  const char* ssid = networks[networksCounter][0];
+  const char* password = networks[networksCounter][1];
   Serial.println(ssid);
 
   WiFi.begin(ssid, password);
 
-  setRing2Blue();
-  connectionWaitID = timer.setInterval(500, connectionWait);
+  setRing2Blue(false);
+  if (connectionWaitID == -1){
+    connectionWaitID = timer.setInterval(500, connectionWait);
+    } else {
+    timer.enable(connectionWaitID);
+    }
 }
 
 void connectionWait() {
   Serial.print(".");
+  setRing2Blue(true);
   if (WiFi.status() == WL_CONNECTED) {
     timer.disable(connectionWaitID);
     Serial.println("");
@@ -87,6 +105,19 @@ void connectionWait() {
     Serial.print("connecting to: ");
     Serial.println(host);
     mainLoop();
+  } else if (WiFi.status() == WL_NO_SSID_AVAIL || WiFi.status() == WL_CONNECTION_LOST || WiFi.status() == WL_CONNECT_FAILED) {
+    timer.disable(connectionWaitID);
+    Serial.println("");
+    Serial.println("No WiFi availble");
+    setNextNetwork();
+    connecting2wifi();
+   }
+}
+
+void setNextNetwork(){
+  networksCounter++;
+  if (networksCounter >= sizeof(networks)  / sizeof(networks[0])){
+    networksCounter = 0;
   }
 }
 
@@ -99,7 +130,7 @@ void mainLoop() {
   const int httpPort = 80;
   if (!client.connect(host, httpPort)) {
     Serial.println("connection failed");
-    setRing2Blue();
+    connecting2wifi();
     return;
   }
 
@@ -135,7 +166,7 @@ void readServer(){
   Serial.println();
   Serial.println("closing connection");
   digitalWrite(LED_BUILTIN, HIGH);
-  timer.setTimeout(1000*60*3, mainLoop);
+  timer.setTimeout(webTimer, mainLoop);
 }
 
 // Get a XML and return the first tag in it
@@ -151,6 +182,7 @@ String getXmlTag(String xml, String tagName) {
   }
   return result;
 }
+
 // Get a XML and return the last tag in it
 String getLastXmlTag(String xml, String tagName) {
   String result;
@@ -164,6 +196,7 @@ String getLastXmlTag(String xml, String tagName) {
     }
   return result;
 }
+
 // Set the led ring according to the activity level
 // and show the leds with a delayed anumation.
 void setRing(int level){
@@ -189,10 +222,10 @@ void setRing(int level){
 
   ringLevel = level;
   nextLed2Show = 0;
-  if (showLedId > 0) {
-    timer.enable(showLedId);
-  } else {
+  if (showLedId == -1) {
     showLedId = timer.setInterval(delayedLedAnumation, showLed);
+  } else {
+    timer.enable(showLedId);
   }
 }
 
@@ -210,13 +243,22 @@ void showLed(){
     timer.disable(showLedId);
   }
 }
-// Set all the ring to blue.
-void setRing2Blue() {
+
+// Set all the ring to blue. And if needed play animation by moving blue led ecth time the function run.
+void setRing2Blue(boolean animation) {
   for(int i=0;i<NUM_PIXELS;i++){
-     pixels.setPixelColor(i, cBlue);
+     pixels.setPixelColor(i, cDBlue);
+  }
+  if (animation){
+     pixels.setPixelColor(animation_led, cBlue);
+     animation_led++;
+     if (animation_led >= NUM_PIXELS){
+        animation_led = 0;
+     }
   }
   pixels.show();
 }
+
 // Testing the ring leds
 void testRing(){
   int level = (int) random(250);
