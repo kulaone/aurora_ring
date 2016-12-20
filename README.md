@@ -31,11 +31,19 @@ Connect the NeoPixel Ring to your WeMos D1 Mini as follows:
 Update aurara_ring.ino with your Wi-Fi network id and password.
 If you are not using ring with 24 LEDs, update NUM_PIXELS with the number of LEDs
 ```c++
-// Wi-Fi info
-const char* ssid = "XXXXXX";
-const char* password = "XXXXXX";
+const char* networks[][2] = {
+        { "ssid", "password"}
+    };
 
 const int NUM_PIXELS 24
+```
+If you need to set more the one network, set it like this:
+```c++
+ const char* networks[][2] = {
+         { "ssid1", "password1"},
+         { "ssid2", "password2"},
+         { "ssid3", "password3" }
+     };
 ```
 
 ### Testing the hardware
