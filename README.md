@@ -38,6 +38,13 @@ const char* password = "XXXXXX";
 const int NUM_PIXELS 24
 ```
 
+### Testing the hardware
+For testing the ring, change *testRingMode* to true.
+```c++
+const boolean testRingMode = true;
+```
+
+
 For this project I was inspired by Uri Shaked article ["How to Connect Your T-Shirt to Slack Using Arduino"][9]
 
 [1]:http://aurorawatch.lancs.ac.uk/
