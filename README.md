@@ -52,7 +52,7 @@ For testing the ring, change *testRingMode* to true.
 const boolean testRingMode = true;
 ```
 
-
+The projecr on [instructables][10]
 For this project I was inspired by Uri Shaked article ["How to Connect Your T-Shirt to Slack Using Arduino"][9]
 
 [1]:http://aurorawatch.lancs.ac.uk/
@@ -64,3 +64,4 @@ For this project I was inspired by Uri Shaked article ["How to Connect Your T-Sh
 [7]:https://www.arduino.cc/en/Main/Software
 [8]:https://learn.adafruit.com/adafruit-huzzah-esp8266-breakout/using-arduino-ide#install-the-esp8266-board-package
 [9]:https://medium.com/@urish/how-to-connect-your-t-shirt-to-slack-using-arduino-90761201d70f#.7f5ov1hdz
+[10]:http://www.instructables.com/id/Aurora-Alerts-Ring/
