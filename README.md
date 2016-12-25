@@ -53,6 +53,7 @@ const boolean testRingMode = true;
 ```
 
 The projecr on [instructables][10]
+
 For this project I was inspired by Uri Shaked article ["How to Connect Your T-Shirt to Slack Using Arduino"][9]
 
 [1]:http://aurorawatch.lancs.ac.uk/
