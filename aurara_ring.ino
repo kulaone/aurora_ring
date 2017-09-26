@@ -83,6 +83,7 @@ void connecting2wifi() {
   const char* password = networks[networksCounter][1];
   Serial.println(ssid);
 
+  WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
 
   setRing2Blue(false);
